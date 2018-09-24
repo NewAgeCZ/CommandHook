@@ -61,6 +61,7 @@ public class CommandBlockListener implements Listener {
 					//System.out.println(arg);
 					//System.out.println(arg.substring(0,2));
 					switch(arg.substring(0, 2)) {
+					case "@a":
 					case "@r":
 					case "@s":
 					case "@e":
