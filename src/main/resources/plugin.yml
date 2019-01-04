@@ -1,5 +1,5 @@
 name: CommandHook
 main: org.bitbucket._newage.commandhook.CommandHook
-version: 1.0.0
+version: 1.0.2
 author: _NewAge
 api-version: 1.13
