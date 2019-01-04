@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -17,10 +18,10 @@ import org.bukkit.entity.Entity;
 public class RefUtil {
 
 	public static String NMS_VERSION;
-	private static Class argumentParser, craftWorld, entity, tileEntityCommand, commandBlockListenerAbstract, commandListenerWrapper, stringReader, entitySelector;
-	private static Constructor c_argumentParser, c_stringReader;
+	private static Class argumentParser, blockPosition, craftWorld, worldServer, entity, tileEntityCommand, commandBlockListenerAbstract, commandListenerWrapper, stringReader, entitySelector;
+	private static Constructor c_argumentParser, c_stringReader, c_blockPosition;
 	private static Method a_parser, b_parser, b_selector, getTileEntityAt, getCommandBlock, getWrapper;
-	private static Field entityUUID;
+	private static Field entityUUID, world;
 	
 	//private Map<World, Map<Location, Object[]>> cache;
 	
@@ -31,26 +32,31 @@ public class RefUtil {
 		try {
 			argumentParser = Class.forName("net.minecraft.server."+NMS_VERSION+".ArgumentParserSelector");
 			stringReader = Class.forName("com.mojang.brigadier.StringReader");
+			blockPosition = Class.forName("net.minecraft.server."+NMS_VERSION+".BlockPosition");
 			craftWorld = Class.forName("org.bukkit.craftbukkit."+NMS_VERSION+".CraftWorld");
 			entity = Class.forName("net.minecraft.server."+NMS_VERSION+".Entity");
 			tileEntityCommand = Class.forName("net.minecraft.server."+NMS_VERSION+".TileEntityCommand");
 			commandBlockListenerAbstract = Class.forName("net.minecraft.server."+NMS_VERSION+".CommandBlockListenerAbstract");
 			commandListenerWrapper = Class.forName("net.minecraft.server."+NMS_VERSION+".CommandListenerWrapper");
 			entitySelector = Class.forName("net.minecraft.server."+NMS_VERSION+".EntitySelector");
+			worldServer = Class.forName("net.minecraft.server."+NMS_VERSION+".WorldServer");
 			
 			c_argumentParser = argumentParser.getConstructor(stringReader);
 			c_stringReader = stringReader.getConstructor(String.class);
+			c_blockPosition = blockPosition.getConstructor(int.class, int.class, int.class);
 			
 			a_parser = argumentParser.getMethod("a");
 			b_parser = argumentParser.getDeclaredMethod("b");
 			b_selector = entitySelector.getDeclaredMethod("b", commandListenerWrapper);
-			getTileEntityAt = craftWorld.getMethod("getTileEntityAt", int.class, int.class, int.class);
+			getTileEntityAt = worldServer.getMethod("getTileEntity", blockPosition);//craftWorld.getMethod("getTileEntityAt", int.class, int.class, int.class);
 			getWrapper = commandBlockListenerAbstract.getMethod("getWrapper");
 			getCommandBlock = tileEntityCommand.getMethod("getCommandBlock");
 			
 			entityUUID = entity.getDeclaredField("uniqueID");
+			world = craftWorld.getDeclaredField("world");
 			
 			entityUUID.setAccessible(true);
+			world.setAccessible(true);
 			b_parser.setAccessible(true);
 			
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | NoSuchFieldException e) {
@@ -76,6 +82,7 @@ public class RefUtil {
 			return reflectedParse(arg, block);
 		}
 		*/
+		
 	}
 	@SuppressWarnings("unused")
 	private List<Entity> cachedParse(Object selectorInstance, Object wrapper) {
@@ -124,7 +131,11 @@ public class RefUtil {
 	
 	public Object getWrapper(Block cmdBlock) {
 		try {
-			Object cmdInstance = getTileEntityAt.invoke(craftWorld.cast(cmdBlock.getWorld()), cmdBlock.getX(), cmdBlock.getY(), cmdBlock.getZ());
+			final Object wld = world.get(craftWorld.cast(cmdBlock.getWorld()));
+			final Object bPos = c_blockPosition.newInstance(cmdBlock.getX(), cmdBlock.getY(), cmdBlock.getZ());
+			
+			Object cmdInstance = getTileEntityAt.invoke(wld, /*ARGS*/bPos);
+			//Object cmdInstance = getTileEntityAt.invoke(craftWorld.cast(cmdBlock.getWorld()), cmdBlock.getX(), cmdBlock.getY(), cmdBlock.getZ());
 			Object cmdBlockListenerInstance = getCommandBlock.invoke(cmdInstance);
 			return getWrapper.invoke(cmdBlockListenerInstance);
 		} catch (IllegalAccessException e) {
@@ -132,6 +143,8 @@ public class RefUtil {
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
 			e.printStackTrace();
 		}
 		
