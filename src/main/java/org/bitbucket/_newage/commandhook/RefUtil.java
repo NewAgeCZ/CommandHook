@@ -12,7 +12,10 @@ import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
+import org.bukkit.block.CommandBlock;
 import org.bukkit.entity.Entity;
+
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 @SuppressWarnings("rawtypes")
 public class RefUtil {
@@ -22,6 +25,8 @@ public class RefUtil {
 	private static Constructor c_argumentParser, c_stringReader, c_blockPosition;
 	private static Method a_parser, b_parser, b_selector, getTileEntityAt, getCommandBlock, getWrapper;
 	private static Field entityUUID, world;
+	
+	private static final java.util.regex.Pattern p = java.util.regex.Pattern.compile("r=[0-9]*");
 	
 	//private Map<World, Map<Location, Object[]>> cache;
 	
@@ -96,23 +101,54 @@ public class RefUtil {
 	
 	public List<Entity> reflectedParse(String arg, Block block) {
 		List<Entity> entities = new java.util.ArrayList<>();
+		Object wrapper = null, parser, selectorInstance;
 		try {
-			Object wrapper = getWrapper(block);
-			Object parser = getArgumentParser(getStringReader(arg));
+			wrapper = getWrapper(block);
+			parser = getArgumentParser(getStringReader(arg));
 			b_parser.invoke(parser);
-			Object selectorInstance = a_parser.invoke(parser);
+			selectorInstance = a_parser.invoke(parser);
 			
 			entities = ((List<?>)b_selector.invoke(selectorInstance, wrapper)).stream().map(e -> Bukkit.getEntity(getEntityUUID(e))).collect(Collectors.toList());
 			//cache.get(block.getWorld()).put(block.getLocation(), new Object[] { selectorInstance, wrapper });
 			
 			return entities;//(List<?>)b_selector.invoke(selectorInstance, wrapper);
-			
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			if(e.getCause() instanceof CommandSyntaxException) {
+				CommandSyntaxException ex = (CommandSyntaxException)e.getCause();
+				System.out.println(String.format("CommandBlock at %s %s %s has thrown SyntaxException. Please check the input. (%s)\n", block.getX(), block.getY(), block.getZ(), ex.getInput()+" ("+ex.getContext()+")"));
+
+				if(ex.getMessage().contains("Unknown option 'r'")) {
+					CommandBlock cb = (CommandBlock)block.getState();
+					java.util.regex.Matcher m = p.matcher(cb.getCommand());
+					if(m.find()) {
+						System.out.println("Attempting to fix 'r' Command Block... (old syntax)");
+						String g = m.group();
+						cb.setCommand(cb.getCommand().replace(g, g.replace("r=", "distance=..")));
+						cb.update();
+						/*if(cb.update()) {
+							//calling method again results in same error
+							wrapper = getWrapper(cb.getBlock());
+							parser = getArgumentParser(getStringReader(arg.replace(g, "distance=..")));
+							try {
+								b_parser.invoke(parser);
+								selectorInstance = a_parser.invoke(parser);
+								
+								entities = ((List<?>)b_selector.invoke(selectorInstance, wrapper)).stream().map(en -> Bukkit.getEntity(getEntityUUID(e))).collect(Collectors.toList());
+								return entities;
+							} catch (Exception exc) {
+								//Silence!
+							}
+							
+						}*/
+					}
+				}
+			} else {
+				e.printStackTrace();
+			}
 		}
 		
 		return entities;
@@ -138,6 +174,7 @@ public class RefUtil {
 			//Object cmdInstance = getTileEntityAt.invoke(craftWorld.cast(cmdBlock.getWorld()), cmdBlock.getX(), cmdBlock.getY(), cmdBlock.getZ());
 			Object cmdBlockListenerInstance = getCommandBlock.invoke(cmdInstance);
 			return getWrapper.invoke(cmdBlockListenerInstance);
+			
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
