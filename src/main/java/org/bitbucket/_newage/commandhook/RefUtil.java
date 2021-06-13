@@ -5,7 +5,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -23,10 +22,12 @@ public class RefUtil {
 	public static String NMS_VERSION;
 	private static Class argumentParser, blockPosition, craftWorld, worldServer, entity, tileEntityCommand, commandBlockListenerAbstract, commandListenerWrapper, stringReader, entitySelector;
 	private static Constructor c_argumentParser, c_stringReader, c_blockPosition;
-	private static Method a_parser, b_parser, b_selector, getTileEntityAt, getCommandBlock, getWrapper;
+	private static Method a_parser, b_parser, b_selector, i_method, getTileEntityAt, getCommandBlock, getWrapper;
 	private static Field entityUUID, world;
 	
-	private static final java.util.regex.Pattern p = java.util.regex.Pattern.compile("r=[0-9]*");
+	private static final java.util.regex.Pattern radius = java.util.regex.Pattern.compile("r=[0-9]*");
+	private static final java.util.regex.Pattern level = java.util.regex.Pattern.compile("l=[0-9]*");
+	private static final java.util.regex.Pattern levelMore = java.util.regex.Pattern.compile("lm=[0-9]*");
 	
 	//private Map<World, Map<Location, Object[]>> cache;
 	
@@ -51,8 +52,18 @@ public class RefUtil {
 			c_blockPosition = blockPosition.getConstructor(int.class, int.class, int.class);
 			
 			a_parser = argumentParser.getMethod("a");
-			b_parser = argumentParser.getDeclaredMethod("b");
-			b_selector = entitySelector.getDeclaredMethod("b", commandListenerWrapper);
+			if(!version.contains("v1_13_"))
+				b_parser = argumentParser.getDeclaredMethod("parseSelector", boolean.class); //selector, boolean.class);
+			else 
+				b_parser = argumentParser.getDeclaredMethod("b", boolean.class);
+			
+			
+			i_method = argumentParser.getDeclaredMethod("I");
+			if(!version.contains("v1_13_"))
+				b_selector = entitySelector.getDeclaredMethod("getEntities", commandListenerWrapper);
+			else
+				b_selector = entitySelector.getDeclaredMethod("b", commandListenerWrapper);
+				
 			getTileEntityAt = worldServer.getMethod("getTileEntity", blockPosition);//craftWorld.getMethod("getTileEntityAt", int.class, int.class, int.class);
 			getWrapper = commandBlockListenerAbstract.getMethod("getWrapper");
 			getCommandBlock = tileEntityCommand.getMethod("getCommandBlock");
@@ -63,6 +74,7 @@ public class RefUtil {
 			entityUUID.setAccessible(true);
 			world.setAccessible(true);
 			b_parser.setAccessible(true);
+			i_method.setAccessible(true);
 			
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | NoSuchFieldException e) {
 			e.printStackTrace();
@@ -99,16 +111,50 @@ public class RefUtil {
 		return new ArrayList<Entity>();
 	}
 	
+	/*
+	public List<Entity> nmsParse(String arg, Block block) {
+		List<Entity> entities = new ArrayList<>();
+		
+		CommandListenerWrapper clw = (CommandListenerWrapper)getWrapper(block);
+		ArgumentParserSelector aps = (ArgumentParserSelector)getArgumentParser(getStringReader(arg));
+		
+		try {
+			aps.parseSelector(false);
+			aps.I();
+			EntitySelector es = aps.a();
+			//EntitySelector es = aps.parse(false);
+			List<?> ent = es.getEntities(clw);
+			System.out.println(ent.toString());
+		} catch (CommandSyntaxException e) {
+			e.printStackTrace();
+		}
+		
+		return entities;
+	}
+	*/
+	
 	public List<Entity> reflectedParse(String arg, Block block) {
 		List<Entity> entities = new java.util.ArrayList<>();
 		Object wrapper = null, parser, selectorInstance;
 		try {
 			wrapper = getWrapper(block);
 			parser = getArgumentParser(getStringReader(arg));
-			b_parser.invoke(parser);
-			selectorInstance = a_parser.invoke(parser);
 			
+			b_parser.invoke(parser, false);
+			i_method.invoke(parser);
+
+			selectorInstance = a_parser.invoke(parser);
+			/*  DEBUG
+			List<?> ent = ((List<?>)b_selector.invoke(selectorInstance, wrapper));
+			if(ent.isEmpty())
+				System.out.println("Empty");
+			else
+				System.out.println(ent.toString());
+			*/
+				
 			entities = ((List<?>)b_selector.invoke(selectorInstance, wrapper)).stream().map(e -> Bukkit.getEntity(getEntityUUID(e))).collect(Collectors.toList());
+			
+			
 			//cache.get(block.getWorld()).put(block.getLocation(), new Object[] { selectorInstance, wrapper });
 			
 			return entities;//(List<?>)b_selector.invoke(selectorInstance, wrapper);
@@ -123,7 +169,7 @@ public class RefUtil {
 
 				if(ex.getMessage().contains("Unknown option 'r'")) {
 					CommandBlock cb = (CommandBlock)block.getState();
-					java.util.regex.Matcher m = p.matcher(cb.getCommand());
+					java.util.regex.Matcher m = radius.matcher(cb.getCommand());
 					if(m.find()) {
 						System.out.println("Attempting to fix 'r' Command Block... (old syntax)");
 						String g = m.group();
@@ -146,6 +192,28 @@ public class RefUtil {
 						}*/
 					}
 				}
+				if(ex.getMessage().contains("Unknown option 'l'")) {
+					CommandBlock cb = (CommandBlock)block.getState();
+					java.util.regex.Matcher m = level.matcher(cb.getCommand());
+					if(m.find()) {
+						System.out.println("Attempting to fix 'l' Command Block... (old syntax)");
+						String g = m.group();
+						cb.setCommand(cb.getCommand().replace(g, g.replace("l=", "level=..")));
+						cb.update();
+					}
+				}
+				if(ex.getMessage().contains("Unknown option 'lm'")) {
+					CommandBlock cb = (CommandBlock)block.getState();
+					java.util.regex.Matcher m = levelMore.matcher(cb.getCommand());
+					if(m.find()) {
+						System.out.println("Attempting to fix 'lm' Command Block... (old syntax)");
+						String g = m.group();
+						cb.setCommand(cb.getCommand().replace(g, g.replace("lm=", "level=")+".."));
+						cb.update();
+					}
+				}
+				
+				
 			} else {
 				e.printStackTrace();
 			}

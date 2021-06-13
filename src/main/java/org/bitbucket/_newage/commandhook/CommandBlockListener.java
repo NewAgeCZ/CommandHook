@@ -73,10 +73,12 @@ public class CommandBlockListener implements Listener {
 							return;
 						}
 						*/
+
 						for(Iterator<org.bukkit.entity.Entity> i = entities.iterator(); i.hasNext();) {
 							org.bukkit.entity.Entity o = i.next();
+							if(o == null) continue;
 							Bukkit.dispatchCommand(e.getSender(), cmd.replace(arg,o.getName()));
-							System.out.println(o.getName());
+							//System.out.println(o.getName());
 						}
 						e.setCancelled(true);
 						//callArgumentParser(arg, ((BlockCommandSender)e.getSender()).getBlock());
