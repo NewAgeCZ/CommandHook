@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.bitbucket._newage.commandhook.versions.VersionMapping;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.CommandBlock;
@@ -20,7 +21,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 public class RefUtil {
 
 	public static String NMS_VERSION;
-	private static Class argumentParser, blockPosition, craftWorld, worldServer, entity, tileEntityCommand, commandBlockListenerAbstract, commandListenerWrapper, stringReader, entitySelector;
+	private static Class<?> argumentParser, blockPosition, craftWorld, worldServer, entity, tileEntityCommand, commandBlockListenerAbstract, commandListenerWrapper, stringReader, entitySelector;
 	private static Constructor c_argumentParser, c_stringReader, c_blockPosition;
 	private static Method a_parser, b_parser, b_selector, i_method, getTileEntityAt, getCommandBlock, getWrapper;
 	private static Field entityUUID, world;
@@ -28,55 +29,44 @@ public class RefUtil {
 	private static final java.util.regex.Pattern radius = java.util.regex.Pattern.compile("r=[0-9]*");
 	private static final java.util.regex.Pattern level = java.util.regex.Pattern.compile("l=[0-9]*");
 	private static final java.util.regex.Pattern levelMore = java.util.regex.Pattern.compile("lm=[0-9]*");
-	
-	//private Map<World, Map<Location, Object[]>> cache;
-	
-	@SuppressWarnings("unchecked")
-	public RefUtil(String version) {
-		NMS_VERSION = version;
-		//cache = new HashMap<>();
+
+	public RefUtil(VersionMapping mapping) {
 		try {
-			argumentParser = Class.forName("net.minecraft.server."+NMS_VERSION+".ArgumentParserSelector");
-			stringReader = Class.forName("com.mojang.brigadier.StringReader");
-			blockPosition = Class.forName("net.minecraft.server."+NMS_VERSION+".BlockPosition");
-			craftWorld = Class.forName("org.bukkit.craftbukkit."+NMS_VERSION+".CraftWorld");
-			entity = Class.forName("net.minecraft.server."+NMS_VERSION+".Entity");
-			tileEntityCommand = Class.forName("net.minecraft.server."+NMS_VERSION+".TileEntityCommand");
-			commandBlockListenerAbstract = Class.forName("net.minecraft.server."+NMS_VERSION+".CommandBlockListenerAbstract");
-			commandListenerWrapper = Class.forName("net.minecraft.server."+NMS_VERSION+".CommandListenerWrapper");
-			entitySelector = Class.forName("net.minecraft.server."+NMS_VERSION+".EntitySelector");
-			worldServer = Class.forName("net.minecraft.server."+NMS_VERSION+".WorldServer");
-			
+			argumentParser = mapping.getArgumentParser();
+			stringReader = mapping.getStringReader();
+			blockPosition = mapping.getBlockPosition();
+			craftWorld = mapping.getCraftWorld();
+			entity = mapping.getEntity();
+			tileEntityCommand = mapping.getTileEntityCommand();
+			commandBlockListenerAbstract = mapping.getCommandBlockListenerAbstract();
+			commandListenerWrapper = mapping.getCommandListenerWrapper();
+			entitySelector = mapping.getEntitySelector();
+			worldServer = mapping.getWorldServer();
+
 			c_argumentParser = argumentParser.getConstructor(stringReader);
 			c_stringReader = stringReader.getConstructor(String.class);
 			c_blockPosition = blockPosition.getConstructor(int.class, int.class, int.class);
-			
+
 			a_parser = argumentParser.getMethod("a");
-			if(!version.contains("v1_13_"))
-				b_parser = argumentParser.getDeclaredMethod("parseSelector", boolean.class); //selector, boolean.class);
-			else 
-				b_parser = argumentParser.getDeclaredMethod("b", boolean.class);
-			
-			
+			b_parser = mapping.getParseSelector();
+
+
 			i_method = argumentParser.getDeclaredMethod("I");
-			if(!version.contains("v1_13_"))
-				b_selector = entitySelector.getDeclaredMethod("getEntities", commandListenerWrapper);
-			else
-				b_selector = entitySelector.getDeclaredMethod("b", commandListenerWrapper);
-				
-			getTileEntityAt = worldServer.getMethod("getTileEntity", blockPosition);//craftWorld.getMethod("getTileEntityAt", int.class, int.class, int.class);
+
+			b_selector = mapping.getEntities();
+
+			getTileEntityAt = worldServer.getMethod("getTileEntity", blockPosition);
 			getWrapper = commandBlockListenerAbstract.getMethod("getWrapper");
 			getCommandBlock = tileEntityCommand.getMethod("getCommandBlock");
-			
-			entityUUID = entity.getDeclaredField("uniqueID");
+
+			entityUUID = mapping.getEntityUUID();
 			world = craftWorld.getDeclaredField("world");
-			
+
 			entityUUID.setAccessible(true);
 			world.setAccessible(true);
 			b_parser.setAccessible(true);
 			i_method.setAccessible(true);
-			
-		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | NoSuchFieldException e) {
+		} catch (NoSuchMethodException | SecurityException | NoSuchFieldException e) {
 			e.printStackTrace();
 		}
 	}
