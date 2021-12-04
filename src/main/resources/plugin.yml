@@ -1,5 +1,7 @@
-name: CommandHook
-main: org.bitbucket._newage.commandhook.CommandHook
-version: 1.0.7
-author: _NewAge
-api-version: 1.13
+name: ${project.name}
+description: ${project.description}
+website: ${project.url}
+version: ${project.version}
+authors: ${minecraft.plugin.contributors}
+main: ${minecraft.plugin.main-class}
+api-version: ${minecraft.plugin.api-version}

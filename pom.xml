@@ -2,14 +2,36 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.bitbucket._newage</groupId>
   <artifactId>commandhook</artifactId>
-  <version>1.0.7</version>
+  <version>1.0.8</version>
   <name>CommandHook</name>
+  <description>Vanilla selector parsing for non-vanilla commands</description>
+  <url>https://www.spigotmc.org/resources/commandhook.61415/</url>
+
+  <developers>
+    <developer>
+      <id>author</id>
+      <name>_NewAge</name>
+    </developer>
+  </developers>
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <minecraft.plugin.api-version>1.13</minecraft.plugin.api-version>
+    <minecraft.plugin.contributors>[_NewAge]</minecraft.plugin.contributors>
+    <minecraft.plugin.main-class>org.bitbucket._newage.commandhook.CommandHook</minecraft.plugin.main-class>
+  </properties>
+
   <repositories>
     <repository>
       <id>spigot-repo</id>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
   </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.spigotmc</groupId>
@@ -31,16 +53,18 @@
         </includes>
       </resource>
     </resources>
+
     <plugins>
         <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
         </configuration>
       </plugin>
     </plugins>
+
   </build>
 </project>
