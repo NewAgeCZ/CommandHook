@@ -17,7 +17,7 @@ public class CommandHook extends JavaPlugin {
 		String version;
 		if(m.find()) {
 			version = m.group();
-			System.out.println("NMS package found: "+version);
+			getLogger().info("NMS package found: " + version);
 
 			RefUtil refUtil;
 			switch (version) {
@@ -38,7 +38,7 @@ public class CommandHook extends JavaPlugin {
 			}
 			getServer().getPluginManager().registerEvents(new CommandBlockListener(refUtil), this);
 		} else {
-			System.out.println("Unable to obtain NMS package");
+			getLogger().warning("Unable to obtain NMS package");
 		}
 	}
 }
