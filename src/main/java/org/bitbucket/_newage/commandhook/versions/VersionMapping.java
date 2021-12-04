@@ -20,6 +20,9 @@ public interface VersionMapping {
 
     Method getParseSelector();
     Method getEntities();
+    Method worldServer__getTileEntity();
+    Method commandBlockListenerAbstract_getWrapper();
+    Method tileEntityCommand_getCommandBlock();
 
     Field getEntityUUID();
 }

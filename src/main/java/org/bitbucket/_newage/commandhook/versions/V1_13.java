@@ -8,7 +8,7 @@ import static org.bitbucket._newage.commandhook.RefUtil.NMS_VERSION;
 public class V1_13 implements VersionMapping {
 
     private Class<?> argumentParser, blockPosition, craftWorld, worldServer, entity, tileEntityCommand, commandBlockListenerAbstract, commandListenerWrapper, stringReader, entitySelector;
-    private Method b_selector, b_parser;
+    private Method b_selector, b_parser, worldServer_getTileEntity, commandBlockListenerAbstract_getWrapper, tileEntityCommand_getCommandBlock;
     private Field entityUUID;
 
     public V1_13(String version) {
@@ -29,6 +29,10 @@ public class V1_13 implements VersionMapping {
             b_selector = entitySelector.getDeclaredMethod("b", commandListenerWrapper);
 
             entityUUID = entity.getDeclaredField("uniqueID");
+
+            worldServer_getTileEntity = worldServer.getMethod("getTileEntity", blockPosition, boolean.class);
+            commandBlockListenerAbstract_getWrapper = commandBlockListenerAbstract.getMethod("getWrapper");
+            tileEntityCommand_getCommandBlock = tileEntityCommand.getMethod("getCommandBlock");
         } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -97,6 +101,21 @@ public class V1_13 implements VersionMapping {
     @Override
     public Field getEntityUUID() {
         return entityUUID;
+    }
+
+    @Override
+    public Method worldServer__getTileEntity() {
+        return worldServer_getTileEntity;
+    }
+
+    @Override
+    public Method commandBlockListenerAbstract_getWrapper() {
+        return commandBlockListenerAbstract_getWrapper;
+    }
+
+    @Override
+    public Method tileEntityCommand_getCommandBlock() {
+        return tileEntityCommand_getCommandBlock;
     }
 
     @Override

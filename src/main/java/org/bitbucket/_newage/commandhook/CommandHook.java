@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import org.bitbucket._newage.commandhook.versions.Pre_1_17;
 import org.bitbucket._newage.commandhook.versions.V1_13;
 import org.bitbucket._newage.commandhook.versions.V1_17;
+import org.bitbucket._newage.commandhook.versions.V1_18;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class CommandHook extends JavaPlugin {
@@ -32,8 +33,11 @@ public class CommandHook extends JavaPlugin {
 				case "v1_16_R3":
 					refUtil = new RefUtil(new Pre_1_17(version));
 					break;
-				default:
+				case "v1_17_R1":
 					refUtil = new RefUtil(new V1_17(version));
+					break;
+				default:
+					refUtil = new RefUtil(new V1_18(version));
 
 			}
 			getServer().getPluginManager().registerEvents(new CommandBlockListener(refUtil), this);

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.bitbucket._newage</groupId>
   <artifactId>commandhook</artifactId>
-  <version>1.0.8</version>
+  <version>2.0.0</version>
   <name>CommandHook</name>
   <description>Vanilla selector parsing for non-vanilla commands</description>
   <url>https://www.spigotmc.org/resources/commandhook.61415/</url>
@@ -36,8 +36,16 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot</artifactId>
-      <version>1.17-R0.1-SNAPSHOT</version>
-      <scope>provided</scope>
+      <version>1.18-R0.1-SNAPSHOT</version>
+      <scope>compile</scope>
+      <type>jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>io.papermc.paper</groupId>
+      <artifactId>paper-server</artifactId>
+      <version>1.18-R0.1-SNAPSHOT</version>
+      <scope>runtime</scope>
       <type>jar</type>
     </dependency>
   </dependencies>

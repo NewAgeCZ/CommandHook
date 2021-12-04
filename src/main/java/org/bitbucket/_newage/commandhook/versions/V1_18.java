@@ -5,13 +5,13 @@ import java.lang.reflect.Method;
 
 import static org.bitbucket._newage.commandhook.RefUtil.NMS_VERSION;
 
-public class V1_17 implements VersionMapping {
+public class V1_18 implements VersionMapping {
 
     private Class<?> argumentParser, blockPosition, craftWorld, worldServer, entity, tileEntityCommand, commandBlockListenerAbstract, commandListenerWrapper, stringReader, entitySelector;
-    private Method b_selector, b_parser, worldServer_getTileEntity, commandBlockListenerAbstract_getWrapper, tileEntityCommand_getCommandBlock;
+    private Method b_selector, b_parser, worldServer_getTileEntity, commandBlockListenerAbstract_createCommandSourceStack, tileEntityCommand_getCommandBlock;
     private Field entityUUID;
 
-    public V1_17(String version) {
+    public V1_18(String version) {
         NMS_VERSION = version;
         try {
             argumentParser = Class.forName("net.minecraft.commands.arguments.selector.ArgumentParserSelector");
@@ -26,13 +26,13 @@ public class V1_17 implements VersionMapping {
             worldServer = Class.forName("net.minecraft.server.level.WorldServer");
 
             b_parser = argumentParser.getDeclaredMethod("parseSelector", boolean.class);
-            b_selector = entitySelector.getDeclaredMethod("getEntities", commandListenerWrapper);
+            b_selector = entitySelector.getDeclaredMethod("b", commandListenerWrapper);
 
-            entityUUID = entity.getDeclaredField("aj");
+            entityUUID = entity.getDeclaredField("ak");
 
-            worldServer_getTileEntity = worldServer.getMethod("getTileEntity", blockPosition, boolean.class);
-            commandBlockListenerAbstract_getWrapper = commandBlockListenerAbstract.getMethod("getWrapper");
-            tileEntityCommand_getCommandBlock = tileEntityCommand.getMethod("getCommandBlock");
+            worldServer_getTileEntity = worldServer.getMethod("getBlockEntity", blockPosition, boolean.class);
+            commandBlockListenerAbstract_createCommandSourceStack = commandBlockListenerAbstract.getMethod("i");
+            tileEntityCommand_getCommandBlock = tileEntityCommand.getMethod("c");
         } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -110,7 +110,7 @@ public class V1_17 implements VersionMapping {
 
     @Override
     public Method commandBlockListenerAbstract_getWrapper() {
-        return commandBlockListenerAbstract_getWrapper;
+        return commandBlockListenerAbstract_createCommandSourceStack;
     }
 
     @Override

@@ -55,9 +55,9 @@ public class RefUtil {
 
 			b_selector = mapping.getEntities();
 
-			getTileEntityAt = worldServer.getMethod("getTileEntity", blockPosition);
-			getWrapper = commandBlockListenerAbstract.getMethod("getWrapper");
-			getCommandBlock = tileEntityCommand.getMethod("getCommandBlock");
+			getTileEntityAt = mapping.worldServer__getTileEntity();
+			getWrapper = mapping.commandBlockListenerAbstract_getWrapper();
+			getCommandBlock = mapping.tileEntityCommand_getCommandBlock();
 
 			entityUUID = mapping.getEntityUUID();
 			world = craftWorld.getDeclaredField("world");
@@ -142,7 +142,10 @@ public class RefUtil {
 				System.out.println(ent.toString());
 			*/
 				
-			entities = ((List<?>)b_selector.invoke(selectorInstance, wrapper)).stream().map(e -> Bukkit.getEntity(getEntityUUID(e))).collect(Collectors.toList());
+			entities = ((List<?>)b_selector.invoke(selectorInstance, wrapper)).stream()
+					.map(e ->
+							Bukkit.getEntity(getEntityUUID(e))
+					).collect(Collectors.toList());
 			
 			
 			//cache.get(block.getWorld()).put(block.getLocation(), new Object[] { selectorInstance, wrapper });
@@ -228,7 +231,7 @@ public class RefUtil {
 			final Object wld = world.get(craftWorld.cast(cmdBlock.getWorld()));
 			final Object bPos = c_blockPosition.newInstance(cmdBlock.getX(), cmdBlock.getY(), cmdBlock.getZ());
 			
-			Object cmdInstance = getTileEntityAt.invoke(wld, /*ARGS*/bPos);
+			Object cmdInstance = getTileEntityAt.invoke(wld, /*ARGS*/bPos, true);
 			//Object cmdInstance = getTileEntityAt.invoke(craftWorld.cast(cmdBlock.getWorld()), cmdBlock.getX(), cmdBlock.getY(), cmdBlock.getZ());
 			Object cmdBlockListenerInstance = getCommandBlock.invoke(cmdInstance);
 			return getWrapper.invoke(cmdBlockListenerInstance);
