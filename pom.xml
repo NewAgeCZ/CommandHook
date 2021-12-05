@@ -28,14 +28,21 @@
   <repositories>
     <repository>
       <id>spigot-repo</id>
+      <name>Spigot repository</name>
       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+    </repository>
+
+    <repository>
+      <id>mojang-repo</id>
+      <name>Mojang - Minecraft Libraries</name>
+      <url>https://libraries.minecraft.net</url>
     </repository>
   </repositories>
 
   <dependencies>
     <dependency>
       <groupId>org.spigotmc</groupId>
-      <artifactId>spigot</artifactId>
+      <artifactId>spigot-api</artifactId>
       <version>1.18-R0.1-SNAPSHOT</version>
       <scope>compile</scope>
       <type>jar</type>
@@ -47,6 +54,22 @@
       <version>1.18-R0.1-SNAPSHOT</version>
       <scope>runtime</scope>
       <type>jar</type>
+      <optional>true</optional>
+    </dependency>
+
+    <!-- Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.32</version>
+      <scope>compile</scope>
+      <type>jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>com.mojang</groupId>
+      <artifactId>brigadier</artifactId>
+      <version>1.0.18</version>
     </dependency>
   </dependencies>
   

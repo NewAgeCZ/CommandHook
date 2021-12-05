@@ -12,49 +12,27 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.server.ServerCommandEvent;
 
-/*
-import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import org.bukkit.block.Block;
-import org.bukkit.craftbukkit.v1_13_R2.CraftWorld;
-import org.bukkit.craftbukkit.v1_13_R2.block.CraftCommandBlock;
-
-import net.minecraft.server.v1_13_R2.ArgumentParserSelector;
-import net.minecraft.server.v1_13_R2.CommandBlockListenerAbstract;
-import net.minecraft.server.v1_13_R2.CommandListenerWrapper;
-import net.minecraft.server.v1_13_R2.Entity;
-import net.minecraft.server.v1_13_R2.EntitySelector;
-import net.minecraft.server.v1_13_R2.TileEntityCommand;
-*/
-
 public class CommandBlockListener implements Listener {
 	
 	private final RefUtil refUtil;
 	
 	public CommandBlockListener(RefUtil util) {
-		super();
 		refUtil = util;
 	}
 	
 	@EventHandler(priority = EventPriority.MONITOR)
 	public void onCommandBlockDispatch(ServerCommandEvent e) {
-		if(e.getSender() instanceof BlockCommandSender) {
+		if (e.getSender() instanceof BlockCommandSender) {
 			//CommandBlock cmdBlock = ((CommandBlock)((BlockCommandSender)e.getSender()).getBlock().getState());
 			String cmd = e.getCommand();
-			if(cmd.startsWith("/"))
+			if (cmd.startsWith("/")) {
 				cmd = cmd.replaceFirst("/", "");
+			}
 			
-			if(cmd.startsWith("minecraft:")) 
+			if (cmd.startsWith("minecraft:")) {
 				return;
-			
-			
-			
-			
+			}
+
 			String[] args = cmd.split(" ");
 			for(String arg : args) {
 				if(arg.startsWith("@")) {

@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.bitbucket._newage.commandhook.versions.VersionMapping;
@@ -16,19 +18,24 @@ import org.bukkit.block.CommandBlock;
 import org.bukkit.entity.Entity;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("rawtypes")
 public class RefUtil {
 
+	private static final Pattern radius = Pattern.compile("r=[0-9]*");
+	private static final Pattern level = Pattern.compile("l=[0-9]*");
+	private static final Pattern levelMore = Pattern.compile("lm=[0-9]*");
+
 	public static String NMS_VERSION;
-	private static Class<?> argumentParser, blockPosition, craftWorld, worldServer, entity, tileEntityCommand, commandBlockListenerAbstract, commandListenerWrapper, stringReader, entitySelector;
-	private static Constructor c_argumentParser, c_stringReader, c_blockPosition;
-	private static Method a_parser, b_parser, b_selector, i_method, getTileEntityAt, getCommandBlock, getWrapper;
-	private static Field entityUUID, world;
-	
-	private static final java.util.regex.Pattern radius = java.util.regex.Pattern.compile("r=[0-9]*");
-	private static final java.util.regex.Pattern level = java.util.regex.Pattern.compile("l=[0-9]*");
-	private static final java.util.regex.Pattern levelMore = java.util.regex.Pattern.compile("lm=[0-9]*");
+
+	private Class<?> argumentParser, blockPosition, craftWorld, worldServer, entity, tileEntityCommand, commandBlockListenerAbstract, commandListenerWrapper, stringReader, entitySelector;
+	private Constructor c_argumentParser, c_stringReader, c_blockPosition;
+	private Method a_parser, b_parser, b_selector, i_method, getTileEntityAt, getCommandBlock, getWrapper;
+	private Field entityUUID, world;
+
+	private Logger logger = LoggerFactory.getLogger(RefUtil.class);
 
 	public RefUtil(VersionMapping mapping) {
 		try {
@@ -66,8 +73,8 @@ public class RefUtil {
 			world.setAccessible(true);
 			b_parser.setAccessible(true);
 			i_method.setAccessible(true);
-		} catch (NoSuchMethodException | SecurityException | NoSuchFieldException e) {
-			e.printStackTrace();
+		} catch (NoSuchMethodException | SecurityException | NoSuchFieldException ex) {
+			logger.error("Error in reflection mapping", ex);
 		}
 	}
 	
@@ -89,14 +96,14 @@ public class RefUtil {
 			return reflectedParse(arg, block);
 		}
 		*/
-		
+
 	}
 	@SuppressWarnings("unused")
 	private List<Entity> cachedParse(Object selectorInstance, Object wrapper) {
 		try {
 			return ((List<?>)b_selector.invoke(selectorInstance, wrapper)).stream().map(e -> Bukkit.getEntity(getEntityUUID(e))).collect(Collectors.toList());
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+			logger.error("Error parsing selector in CommandBlock", ex);
 		}
 		return new ArrayList<Entity>();
 	}
@@ -145,38 +152,37 @@ public class RefUtil {
 			entities = ((List<?>)b_selector.invoke(selectorInstance, wrapper)).stream()
 					.map(e ->
 							Bukkit.getEntity(getEntityUUID(e))
-					).collect(Collectors.toList());
+					)
+					.collect(Collectors.toList());
 			
 			
 			//cache.get(block.getWorld()).put(block.getLocation(), new Object[] { selectorInstance, wrapper });
 			
 			return entities;//(List<?>)b_selector.invoke(selectorInstance, wrapper);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			if(e.getCause() instanceof CommandSyntaxException) {
-				CommandSyntaxException ex = (CommandSyntaxException)e.getCause();
-				System.out.println(String.format("CommandBlock at %s %s %s has thrown SyntaxException. Please check the input. (%s)\n", block.getX(), block.getY(), block.getZ(), ex.getInput()+" ("+ex.getContext()+")"));
-
-				if(ex.getMessage().contains("Unknown option 'r'")) {
-					CommandBlock cb = (CommandBlock)block.getState();
-					java.util.regex.Matcher m = radius.matcher(cb.getCommand());
-					if(m.find()) {
-						System.out.println("Attempting to fix 'r' Command Block... (old syntax)");
-						String g = m.group();
-						cb.setCommand(cb.getCommand().replace(g, g.replace("r=", "distance=..")));
-						cb.update();
+		} catch (IllegalAccessException | IllegalArgumentException ex) {
+			logger.error("Error parsing selector in CommandBlock", ex);
+		} catch (InvocationTargetException ex) {
+			if (ex.getCause() instanceof CommandSyntaxException) {
+				CommandSyntaxException commandSyntaxException = (CommandSyntaxException)ex.getCause();
+				logger.warn("CommandBlock at x={} y={} z={} world={} has thrown SyntaxException. Please check the input. Input={} ({})", block.getX(), block.getY(), block.getZ(), block.getWorld().getName(), commandSyntaxException.getInput(), commandSyntaxException.getContext());
+				
+				if (commandSyntaxException.getMessage().contains("Unknown option 'r'")) {
+					CommandBlock commandBlock = (CommandBlock)block.getState();
+					Matcher radiusMatcher = radius.matcher(commandBlock.getCommand());
+					if (radiusMatcher.find()) {
+						logger.info("Attempting to fix 'r' Command Block... (old syntax)");
+						String radiusGroup = radiusMatcher.group();
+						commandBlock.setCommand(commandBlock.getCommand().replace(radiusGroup, radiusGroup.replace("r=", "distance=..")));
+						commandBlock.update();
 						/*if(cb.update()) {
 							//calling method again results in same error
 							wrapper = getWrapper(cb.getBlock());
-							parser = getArgumentParser(getStringReader(arg.replace(g, "distance=..")));
+							parser = getArgumentParser(getStringReader(arg.replace(radiusGroup, "distance=..")));
 							try {
 								b_parser.invoke(parser);
 								selectorInstance = a_parser.invoke(parser);
 								
-								entities = ((List<?>)b_selector.invoke(selectorInstance, wrapper)).stream().map(en -> Bukkit.getEntity(getEntityUUID(e))).collect(Collectors.toList());
+								entities = ((List<?>)b_selector.invoke(selectorInstance, wrapper)).stream().map(en -> Bukkit.getEntity(getEntityUUID(ex))).collect(Collectors.toList());
 								return entities;
 							} catch (Exception exc) {
 								//Silence!
@@ -185,30 +191,28 @@ public class RefUtil {
 						}*/
 					}
 				}
-				if(ex.getMessage().contains("Unknown option 'l'")) {
-					CommandBlock cb = (CommandBlock)block.getState();
-					java.util.regex.Matcher m = level.matcher(cb.getCommand());
-					if(m.find()) {
-						System.out.println("Attempting to fix 'l' Command Block... (old syntax)");
-						String g = m.group();
-						cb.setCommand(cb.getCommand().replace(g, g.replace("l=", "level=..")));
-						cb.update();
+				if (commandSyntaxException.getMessage().contains("Unknown option 'l'")) {
+					CommandBlock commandBlock = (CommandBlock)block.getState();
+					Matcher levelMatcher = level.matcher(commandBlock.getCommand());
+					if (levelMatcher.find()) {
+						logger.info("Attempting to fix 'l' Command Block... (old syntax)");
+						String levelGroup = levelMatcher.group();
+						commandBlock.setCommand(commandBlock.getCommand().replace(levelGroup, levelGroup.replace("l=", "level=..")));
+						commandBlock.update();
 					}
 				}
-				if(ex.getMessage().contains("Unknown option 'lm'")) {
-					CommandBlock cb = (CommandBlock)block.getState();
-					java.util.regex.Matcher m = levelMore.matcher(cb.getCommand());
-					if(m.find()) {
-						System.out.println("Attempting to fix 'lm' Command Block... (old syntax)");
-						String g = m.group();
-						cb.setCommand(cb.getCommand().replace(g, g.replace("lm=", "level=")+".."));
-						cb.update();
+				if (commandSyntaxException.getMessage().contains("Unknown option 'lm'")) {
+					CommandBlock commandBlock = (CommandBlock)block.getState();
+					Matcher levelMoreMatcher = levelMore.matcher(commandBlock.getCommand());
+					if (levelMoreMatcher.find()) {
+						logger.info("Attempting to fix 'lm' Command Block... (old syntax)");
+						String levelMoreGroup = levelMoreMatcher.group();
+						commandBlock.setCommand(commandBlock.getCommand().replace(levelMoreGroup, levelMoreGroup.replace("lm=", "level=")+".."));
+						commandBlock.update();
 					}
 				}
-				
-				
 			} else {
-				e.printStackTrace();
+				logger.error("Error parsing selector in CommandBlock", ex);
 			}
 		}
 		
@@ -218,10 +222,8 @@ public class RefUtil {
 	public UUID getEntityUUID(Object entity) {
 		try {
 			return (UUID)entityUUID.get(entity);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+		} catch (IllegalArgumentException | IllegalAccessException ex) {
+			logger.error("Error accessing Entity UUID field", ex);
 		}
 		return null;
 	}
@@ -236,16 +238,9 @@ public class RefUtil {
 			Object cmdBlockListenerInstance = getCommandBlock.invoke(cmdInstance);
 			return getWrapper.invoke(cmdBlockListenerInstance);
 			
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | InstantiationException ex) {
+			logger.error("Error obtaining CommandBlockWrapper", ex);
 		}
-		
 		return null;
 	}
 	
@@ -253,18 +248,9 @@ public class RefUtil {
 	public Object getStringReader(String arg) {
 		try {
 			return c_stringReader.newInstance(arg.substring(1));
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException ex) {
+			logger.error("Error instantiating StringReader", ex);
 		}
-		
 		return null;
 	}
 	
@@ -272,8 +258,8 @@ public class RefUtil {
 	public Object getArgumentParser(Object stringReaderInstance) {
 		try {
 			return c_argumentParser.newInstance(stringReaderInstance);
-		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
-			e.printStackTrace();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException ex) {
+			logger.error("Error instantiating ArgumentParser", ex);
 		}
 		return null;
 	}

@@ -1,5 +1,8 @@
 package org.bitbucket._newage.commandhook.versions;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -10,6 +13,7 @@ public class V1_18 implements VersionMapping {
     private Class<?> argumentParser, blockPosition, craftWorld, worldServer, entity, tileEntityCommand, commandBlockListenerAbstract, commandListenerWrapper, stringReader, entitySelector;
     private Method b_selector, b_parser, worldServer_getTileEntity, commandBlockListenerAbstract_createCommandSourceStack, tileEntityCommand_getCommandBlock;
     private Field entityUUID;
+    private final Logger logger = LoggerFactory.getLogger(V1_18.class);
 
     public V1_18(String version) {
         NMS_VERSION = version;
@@ -33,8 +37,8 @@ public class V1_18 implements VersionMapping {
             worldServer_getTileEntity = worldServer.getMethod("getBlockEntity", blockPosition, boolean.class);
             commandBlockListenerAbstract_createCommandSourceStack = commandBlockListenerAbstract.getMethod("i");
             tileEntityCommand_getCommandBlock = tileEntityCommand.getMethod("c");
-        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | NoSuchFieldException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | NoSuchFieldException ex) {
+            logger.error("Error preparing reflection mapping for version {}", version, ex);
         }
     }
 

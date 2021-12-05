@@ -8,17 +8,20 @@ import org.bitbucket._newage.commandhook.versions.V1_13;
 import org.bitbucket._newage.commandhook.versions.V1_17;
 import org.bitbucket._newage.commandhook.versions.V1_18;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CommandHook extends JavaPlugin {
+	private static final Pattern NMS_PATTERN = Pattern.compile("(v\\d+_\\d+_\\w+)");
+	private final Logger logger = LoggerFactory.getLogger(CommandHook.class);
 
-	
 	public void onEnable() {
-		final Pattern p = Pattern.compile("(v\\d+_\\d+_\\w+)");
-		final Matcher m = p.matcher(getServer().getClass().toString());
+		final Matcher nmsMatcher = NMS_PATTERN.matcher(getServer().getClass().toString());
+
 		String version;
-		if(m.find()) {
-			version = m.group();
-			getLogger().info("NMS package found: " + version);
+		if (nmsMatcher.find()) {
+			version = nmsMatcher.group();
+			logger.info("NMS package found: {}", version);
 
 			RefUtil refUtil;
 			switch (version) {
@@ -38,11 +41,11 @@ public class CommandHook extends JavaPlugin {
 					break;
 				default:
 					refUtil = new RefUtil(new V1_18(version));
-
 			}
+
 			getServer().getPluginManager().registerEvents(new CommandBlockListener(refUtil), this);
 		} else {
-			getLogger().warning("Unable to obtain NMS package");
+			logger.error("Unable to obtain NMS package, plugin will not work.");
 		}
 	}
 }
