@@ -80,23 +80,6 @@ public class RefUtil {
     
     public List<Entity> parse(String arg, Block block) {
         return reflectedParse(arg, block);
-        /*
-        if(cache.containsKey(block.getWorld())) {
-            if(cache.get(block.getWorld()).containsKey(block.getLocation())) {
-                System.out.println("Fully cached");
-                Object[] ws = cache.get(block.getWorld()).get(block.getLocation());
-                return cachedParse(ws[0], ws[1]);
-            } else {
-                System.out.println("Caching cmdblock");
-                return reflectedParse(arg, block);
-            }
-        } else {
-            System.out.println("Caching world");
-            cache.put(block.getWorld(), new HashMap<Location, Object[]>());
-            return reflectedParse(arg, block);
-        }
-        */
-
     }
     @SuppressWarnings("unused")
     private List<Entity> cachedParse(Object selectorInstance, Object wrapper) {
@@ -107,28 +90,6 @@ public class RefUtil {
         }
         return new ArrayList<Entity>();
     }
-    
-    /*
-    public List<Entity> nmsParse(String arg, Block block) {
-        List<Entity> entities = new ArrayList<>();
-        
-        CommandListenerWrapper clw = (CommandListenerWrapper)getWrapper(block);
-        ArgumentParserSelector aps = (ArgumentParserSelector)getArgumentParser(getStringReader(arg));
-        
-        try {
-            aps.parseSelector(false);
-            aps.I();
-            EntitySelector es = aps.a();
-            //EntitySelector es = aps.parse(false);
-            List<?> ent = es.getEntities(clw);
-            System.out.println(ent.toString());
-        } catch (CommandSyntaxException e) {
-            e.printStackTrace();
-        }
-        
-        return entities;
-    }
-    */
     
     public List<Entity> reflectedParse(String arg, Block block) {
         List<Entity> entities = new java.util.ArrayList<>();
@@ -141,13 +102,6 @@ public class RefUtil {
             i_method.invoke(parser);
 
             selectorInstance = a_parser.invoke(parser);
-            /*  DEBUG
-            List<?> ent = ((List<?>)b_selector.invoke(selectorInstance, wrapper));
-            if(ent.isEmpty())
-                System.out.println("Empty");
-            else
-                System.out.println(ent.toString());
-            */
                 
             entities = ((List<?>)b_selector.invoke(selectorInstance, wrapper)).stream()
                     .map(e ->
@@ -155,10 +109,7 @@ public class RefUtil {
                     )
                     .collect(Collectors.toList());
             
-            
-            //cache.get(block.getWorld()).put(block.getLocation(), new Object[] { selectorInstance, wrapper });
-            
-            return entities;//(List<?>)b_selector.invoke(selectorInstance, wrapper);
+            return entities;
         } catch (IllegalAccessException | IllegalArgumentException ex) {
             logger.error("Error parsing selector in CommandBlock", ex);
         } catch (InvocationTargetException ex) {
@@ -174,21 +125,6 @@ public class RefUtil {
                         String radiusGroup = radiusMatcher.group();
                         commandBlock.setCommand(commandBlock.getCommand().replace(radiusGroup, radiusGroup.replace("r=", "distance=..")));
                         commandBlock.update();
-                        /*if(cb.update()) {
-                            //calling method again results in same error
-                            wrapper = getWrapper(cb.getBlock());
-                            parser = getArgumentParser(getStringReader(arg.replace(radiusGroup, "distance=..")));
-                            try {
-                                b_parser.invoke(parser);
-                                selectorInstance = a_parser.invoke(parser);
-                                
-                                entities = ((List<?>)b_selector.invoke(selectorInstance, wrapper)).stream().map(en -> Bukkit.getEntity(getEntityUUID(ex))).collect(Collectors.toList());
-                                return entities;
-                            } catch (Exception exc) {
-                                //Silence!
-                            }
-                            
-                        }*/
                     }
                 }
                 if (commandSyntaxException.getMessage().contains("Unknown option 'l'")) {
@@ -234,7 +170,6 @@ public class RefUtil {
             final Object bPos = c_blockPosition.newInstance(cmdBlock.getX(), cmdBlock.getY(), cmdBlock.getZ());
             
             Object cmdInstance = getTileEntityAt.invoke(wld, /*ARGS*/bPos, true);
-            //Object cmdInstance = getTileEntityAt.invoke(craftWorld.cast(cmdBlock.getWorld()), cmdBlock.getX(), cmdBlock.getY(), cmdBlock.getZ());
             Object cmdBlockListenerInstance = getCommandBlock.invoke(cmdInstance);
             return getWrapper.invoke(cmdBlockListenerInstance);
             
