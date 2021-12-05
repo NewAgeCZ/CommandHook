@@ -25,6 +25,11 @@
     <minecraft.plugin.main-class>org.bitbucket._newage.commandhook.CommandHook</minecraft.plugin.main-class>
   </properties>
 
+  <scm>
+    <url>https://github.com/NewAgeCZ/CommandHook</url>
+    <connection>scm:git:https://github.com/NewAgeCZ/CommandHook</connection>
+  </scm>
+
   <repositories>
     <repository>
       <id>spigot-repo</id>
