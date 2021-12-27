@@ -1,0 +1,96 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.bitbucket._newage.commandhook</groupId>
+    <artifactId>parent</artifactId>
+    <version>2.0.0</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+
+  <artifactId>plugin</artifactId>
+  <name>CommandHook - Plugin</name>
+  <packaging>jar</packaging>
+
+  <properties>
+    <minecraft.plugin.name>CommandHook</minecraft.plugin.name>
+    <minecraft.plugin.api-version>1.13</minecraft.plugin.api-version>
+    <minecraft.plugin.contributors>[_NewAge]</minecraft.plugin.contributors>
+    <minecraft.plugin.main-class>org.bitbucket._newage.commandhook.CommandHook</minecraft.plugin.main-class>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <version>1.18-R0.1-SNAPSHOT</version>
+      <scope>compile</scope>
+      <type>jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>io.papermc.paper</groupId>
+      <artifactId>paper-server</artifactId>
+      <version>1.18-R0.1-SNAPSHOT</version>
+      <scope>runtime</scope>
+      <type>jar</type>
+      <optional>true</optional>
+    </dependency>
+
+    <dependency>
+      <groupId>com.mojang</groupId>
+      <artifactId>brigadier</artifactId>
+      <version>1.0.18</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-nms</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+  </dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <!-- Shade in all mappings contained in NMS module -->
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>org.bitbucket._newage.commandhook:mapping-nms</include>
+                </includes>
+              </artifactSet>
+              <filters>
+                  <filter>
+                    <artifact>org.bitbucket._newage.commandhook:mapping-nms</artifact>
+                    <includes>
+                      <include>org/bitbucket/_newage/commandhook/**/*.class</include>
+                    </includes>
+                  </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+
+    <resources>
+      <resource>
+        <targetPath>.</targetPath>
+        <filtering>true</filtering>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>plugin.yml</include>
+        </includes>
+      </resource>
+    </resources>
+
+  </build>
+</project>

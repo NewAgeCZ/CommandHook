@@ -1,7 +1,0 @@
-name: ${project.name}
-description: ${project.description}
-website: ${project.url}
-version: ${project.version}
-authors: ${minecraft.plugin.contributors}
-main: ${minecraft.plugin.main-class}
-api-version: ${minecraft.plugin.api-version}
