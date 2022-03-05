@@ -68,7 +68,13 @@
 
     <dependency>
       <groupId>org.bitbucket._newage.commandhook</groupId>
-      <artifactId>mapping-v1_18</artifactId>
+      <artifactId>mapping-v1_18_R1</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_18_R2</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
   </dependencies>

@@ -53,8 +53,12 @@ public class NmsMappingSelector {
                 break;
 
             case "v1_18_R1":
+                mapping = new NmsV1_18_R1();
+                break;
+
+            case "v1_18_R2":
             default:
-                mapping = new NmsV1_18();
+                mapping = new NmsV1_18_R2();
         }
 
         return mapping;

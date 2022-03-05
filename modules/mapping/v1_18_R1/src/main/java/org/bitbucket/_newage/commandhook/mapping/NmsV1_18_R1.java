@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class NmsV1_18 extends AMapping {
+public class NmsV1_18_R1 extends AMapping {
 
     @Override
     public List<Entity> getEntitiesFromSelector(String selector, Block commandBlock) {
