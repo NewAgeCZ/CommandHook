@@ -1,11 +1,16 @@
 package org.bitbucket._newage.commandhook.mapping;
 
+import org.bitbucket._newage.commandhook.legacy.mapping.LegacyMapping;
 import org.bitbucket._newage.commandhook.mapping.api.IMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Mapping provider static class
  */
 public class NmsMappingSelector {
+
+    private static final Logger logger = LoggerFactory.getLogger(NmsMappingSelector.class);
 
     private NmsMappingSelector() {
 
@@ -18,7 +23,7 @@ public class NmsMappingSelector {
      * @return implementation of {@link IMapping}
      */
     public static IMapping fromNmsVersion(String nmsVersion) {
-        IMapping mapping = null;
+        IMapping mapping;
         switch (nmsVersion) {
             case "v1_13_R1":
                 mapping = new NmsV1_13_R1();
@@ -57,8 +62,13 @@ public class NmsMappingSelector {
                 break;
 
             case "v1_18_R2":
-            default:
                 mapping = new NmsV1_18_R2();
+                break;
+
+            default:
+                logger.warn("Mapping for {} not found! Either the plugin is outdated or has not been updated yet!", nmsVersion);
+                logger.info("Falling back to legacy mode");
+                mapping = new LegacyMapping(nmsVersion);
         }
 
         return mapping;
