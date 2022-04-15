@@ -56,7 +56,7 @@ public class CommandBlockListener implements Listener {
      * @param cmd command written in Command Block
      * @return Selector with arguments
      */
-    private String getSelectorWithArguments(String cmd) {
+    public static String getSelectorWithArguments(String cmd) {
         String selector = cmd.substring(cmd.indexOf('@'));
 
         if (selector.length() > 3 && selector.charAt(2) == '[') {
@@ -74,6 +74,8 @@ public class CommandBlockListener implements Listener {
                     break;
                 }
             }
+        } else {
+            selector = selector.substring(0, 2);
         }
 
         return selector;
