@@ -10,7 +10,7 @@
   <artifactId>plugin</artifactId>
   <name>CommandHook - Plugin</name>
   <packaging>jar</packaging>
-  <version>2.1.2</version>
+  <version>2.2.0</version>
 
   <properties>
     <minecraft.plugin.name>CommandHook</minecraft.plugin.name>
@@ -23,7 +23,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.18.2-R0.1-SNAPSHOT</version>
+      <version>1.19-R0.1-SNAPSHOT</version>
       <scope>compile</scope>
       <type>jar</type>
     </dependency>
@@ -31,7 +31,7 @@
     <dependency>
       <groupId>io.papermc.paper</groupId>
       <artifactId>paper-server</artifactId>
-      <version>1.18-R0.1-SNAPSHOT</version>
+      <version>1.19-R0.1-SNAPSHOT</version>
       <scope>runtime</scope>
       <type>jar</type>
       <optional>true</optional>

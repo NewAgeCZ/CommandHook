@@ -65,6 +65,10 @@ public class NmsMappingSelector {
                 mapping = new NmsV1_18_R2();
                 break;
 
+            case "v1_19_R1":
+                mapping = new NmsV1_19_R1();
+                break;
+
             default:
                 logger.warn("Mapping for {} not found! Either the plugin is outdated or has not been updated yet!", nmsVersion);
                 logger.info("Falling back to legacy mode");
