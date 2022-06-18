@@ -1,6 +1,6 @@
 name: ${minecraft.plugin.name}
 description: ${project.description}
-website: ${project.url}
+website: ${project.parent.url}
 version: ${project.version}
 authors: ${minecraft.plugin.contributors}
 main: ${minecraft.plugin.main-class}
