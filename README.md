@@ -24,7 +24,7 @@ All you need to do is edit the nms module dependencies in pom.xml & NmsMappingSe
 
 | NMS      | Description                               |
 |----------|-------------------------------------------|
-| v1_19_R1 | NMS mapping for Minecraft 1.19            |
+| v1_19_R1 | NMS mapping for Minecraft 1.19   - 1.19.2 |
 | v1_18_R2 | NMS mapping for Minecraft 1.18.2          |
 | v1_18_R1 | NMS mapping for Minecraft 1.18   - 1.18.1 |
 | v1_18    | NMS mapping for Minecraft 1.18   - 1.18.1 |
