@@ -2,7 +2,7 @@
 Minecraft plugin for Bukkit API compatible servers. Vanilla selector parsing for non-vanilla commands.
 
 **Supported versions:**
-**1.13** up to **1.19.3**
+**1.13** up to **1.19.4**
 
 ## Contact
 * Discord: _NewAge#5267
@@ -24,6 +24,7 @@ All you need to do is edit the nms module dependencies in pom.xml & NmsMappingSe
 
 | NMS      | Description                               |
 |----------|-------------------------------------------|
+| v1_19_R3 | NMS mapping for Minecraft 1.19.4          |
 | v1_19_R2 | NMS mapping for Minecraft 1.19.3          |
 | v1_19_R1 | NMS mapping for Minecraft 1.19   - 1.19.2 |
 | v1_18_R2 | NMS mapping for Minecraft 1.18.2          |

@@ -92,6 +92,12 @@
 
     <dependency>
       <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_19_R3</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
       <artifactId>mapping-legacy</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
