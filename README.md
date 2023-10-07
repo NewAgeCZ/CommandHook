@@ -24,7 +24,8 @@ All you need to do is edit the nms module dependencies in pom.xml & NmsMappingSe
 
 | NMS      | Description                               |
 |----------|-------------------------------------------|
-| v1_20_R1 | NMS mapping for Minecraft 1.20            |
+| v1_20_R2 | NMS mapping for Minecraft 1.20.2          |
+| v1_20_R1 | NMS mapping for Minecraft 1.20   - 1.20.1 |
 | v1_19_R3 | NMS mapping for Minecraft 1.19.4          |
 | v1_19_R2 | NMS mapping for Minecraft 1.19.3          |
 | v1_19_R1 | NMS mapping for Minecraft 1.19   - 1.19.2 |
