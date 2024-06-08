@@ -88,6 +88,14 @@ public class NmsMappingSelector {
                 mapping = new NmsV1_20_R2();
                 break;
 
+            case "v1_20_R3":
+                mapping = new NmsV1_20_R3();
+                break;
+
+            case "v1_20_R4":
+                mapping = new NmsV1_20_R4();
+                break;
+
             default:
                 logger.warn("Mapping for {} not found! Either the plugin is outdated or has not been updated yet!", nmsVersion);
                 logger.info("Falling back to legacy mode");
@@ -177,6 +185,10 @@ public class NmsMappingSelector {
         case "1.20.3":
         case "1.20.4":
             mapping = new NmsV1_20_R3();
+            break;
+        case "1.20.5":
+        case "1.20.6":
+            mapping = new NmsV1_20_R4();
             break;
 
         default:
