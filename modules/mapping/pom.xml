@@ -12,8 +12,8 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>spigot-nms</module>
-    <module>mojang-mapped</module>
+    <module>spigot</module>
+    <module>paper</module>
   </modules>
 
   <dependencies>

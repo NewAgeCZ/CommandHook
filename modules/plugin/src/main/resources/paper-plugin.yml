@@ -1,0 +1,5 @@
+name: ${minecraft.plugin.name}
+description: ${project.description}
+version: ${project.version}
+main: ${paper.plugin.main-class}
+api-version: ${paper.plugin.api.version}

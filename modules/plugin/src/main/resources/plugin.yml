@@ -3,5 +3,5 @@ description: ${project.description}
 website: ${project.parent.url}
 version: ${project.version}
 authors: ${minecraft.plugin.contributors}
-main: ${minecraft.plugin.main-class}
-api-version: ${minecraft.plugin.api-version}
+main: ${spigot.plugin.main-class}
+api-version: ${spigot.plugin.api-version}

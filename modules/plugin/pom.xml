@@ -14,23 +14,25 @@
 
   <properties>
     <minecraft.plugin.name>CommandHook</minecraft.plugin.name>
-    <minecraft.plugin.api-version>1.13</minecraft.plugin.api-version>
     <minecraft.plugin.contributors>[_NewAge]</minecraft.plugin.contributors>
-    <minecraft.plugin.main-class>org.bitbucket._newage.commandhook.CommandHook</minecraft.plugin.main-class>
+    <spigot.plugin.api-version>1.13</spigot.plugin.api-version>
+    <spigot.plugin.main-class>org.bitbucket._newage.commandhook.CommandHookSpigot</spigot.plugin.main-class>
+    <paper.plugin.api.version>1.20.6</paper.plugin.api.version>
+    <paper.plugin.main-class>org.bitbucket._newage.commandhook.CommandHookPaper</paper.plugin.main-class>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.20.2-R0.1-SNAPSHOT</version>
+      <version>1.20.6-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>io.papermc.paper</groupId>
       <artifactId>paper-server</artifactId>
-      <version>1.20.2-R0.1-SNAPSHOT</version>
+      <version>1.20.6-R0.1-SNAPSHOT</version>
       <classifier>mojang-mapped</classifier>
       <scope>runtime</scope>
       <type>jar</type>
@@ -38,14 +40,8 @@
     </dependency>
 
     <dependency>
-      <groupId>com.mojang</groupId>
-      <artifactId>brigadier</artifactId>
-      <version>1.0.18</version>
-    </dependency>
-
-    <dependency>
       <groupId>org.bitbucket._newage.commandhook</groupId>
-      <artifactId>mapping-nms</artifactId>
+      <artifactId>mapping-provider</artifactId>
       <version>2.0.0</version>
     </dependency>
 
@@ -80,12 +76,12 @@
             <configuration>
               <artifactSet>
                 <includes>
-                  <include>org.bitbucket._newage.commandhook:mapping-nms</include>
+                  <include>org.bitbucket._newage.commandhook:mapping-provider</include>
                 </includes>
               </artifactSet>
               <filters>
                   <filter>
-                    <artifact>org.bitbucket._newage.commandhook:mapping-nms</artifact>
+                    <artifact>org.bitbucket._newage.commandhook:mapping-provider</artifact>
                     <includes>
                       <include>org/bitbucket/_newage/commandhook/**/*.class</include>
                     </includes>
@@ -104,6 +100,7 @@
         <directory>src/main/resources</directory>
         <includes>
           <include>plugin.yml</include>
+          <include>paper-plugin.yml</include>
         </includes>
       </resource>
     </resources>
