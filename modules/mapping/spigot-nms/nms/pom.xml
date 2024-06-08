@@ -1,0 +1,162 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.bitbucket._newage.commandhook</groupId>
+    <artifactId>spigot-nms</artifactId>
+    <version>2.0.0</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <name>CommandHook - NMS Mapping (All versions)</name>
+  <artifactId>mapping-nms</artifactId>
+  <packaging>jar</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-api</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_13_R1</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_13_R2</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_14</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_15</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_16_R1</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_16_R2</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_16_R3</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_17</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_18_R1</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_18_R2</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_19_R1</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_19_R2</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_19_R3</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_20_R1</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_20_R2</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_20_R3</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-v1_20_R4</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.bitbucket._newage.commandhook</groupId>
+      <artifactId>mapping-legacy</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <!-- Shade all mapping modules into NMS jar -->
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>org.bitbucket._newage.commandhook:mapping*</include>
+                </includes>
+              </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>org.bitbucket._newage.commandhook:mapping*</artifact>
+                  <includes>
+                    <include>org/bitbucket/_newage/commandhook/**/*.class</include>
+                  </includes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
