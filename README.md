@@ -2,25 +2,45 @@
 Minecraft plugin for Bukkit API compatible servers. Vanilla selector parsing for non-vanilla commands.
 
 **Supported versions:**
-**1.13** up to **1.20**
+**1.13** up to **1.20.6**
+
+> **Note:** Plugin is not in active development, only bugfixes and ports to newer MC runtimes are done. <br/><br/>
+> That means updates may be slow from version to version as I am no longer playing Minecraft or maintaining any server since 2019.
+> I do welcome pull requests and issue notices, though.
 
 ## Contact
-* Discord: _NewAge#5267
+* Discord: _newage
 * Spigot - [_NewAge](https://www.spigotmc.org/members/_newage.106350/)
 
 ## Structure
 To achieve _easier_ maintainability, the plugin was split into multiple maven modules <br/>
 These can be found under _modules_ folder <br/>
 
-| Module | Description                                                                            |
-|--------|----------------------------------------------------------------------------------------|
-| plugin | Spigot plugin                                                                          |
-| api    | Connection between the plugin and NMS mapping                                          |
-| nms    | Used as dependency in the _plugin_ module. Contains the NMS mappings (via maven shade) |
-| legacy | Reflection mapping used in versions up to _2.0.0_. Unmaintained.                       |
+| Module   | Description                                       |
+|----------|---------------------------------------------------|
+| plugin   | Spigot / Paper plugin                             |
+| api      | Connection between the plugin and mapping modules |
+| provider | Mapping provider for both Spigot and Paper        |
 
-Adding to the modules above, you may configure the nms module to contain at least one or more mappings <br/>
-All you need to do is edit the nms module dependencies in pom.xml & NmsMappingSelector class
+Adding to the modules above, you may configure the provider module to contain at least one or more mappings. <br/>
+
+As of CommandHook 3.0.0, different mappings are available for Spigot runtime and Paper runtime.
+These are configurable in provider modules in both [spigot](modules/mapping/spigot/provider) and [paper](modules/mapping/paper/provider) directory
+
+----
+
+### Paper mappings
+Since 1.20.5 [Paper no longer relocates CraftBukkit internals](https://forums.papermc.io/threads/important-dev-psa-future-removal-of-cb-package-relocation.1106/) and [switched to mojang mapped runtime](https://forums.papermc.io/threads/paper-velocity-1-20-6.1152/).
+That means plugin _should_ be upwards compatible without any work whilst running on Paper based servers.
+
+| Mapping       | Description                               |
+|---------------|-------------------------------------------|
+| mojang-mapped | Mapping for Paper 1.20.6+ (Mojang-mapped) |
+
+
+### Spigot mappings
+
+**Note:** As of CommandHook 3.0.0, Only latest version is supported, all other mappings are subject to removal in future versions. 
 
 | NMS      | Description                               |
 |----------|-------------------------------------------|
@@ -43,8 +63,10 @@ All you need to do is edit the nms module dependencies in pom.xml & NmsMappingSe
 | v1_13_R2 | NMS mapping for Minecraft 1.13.1 - 1.13.2 |
 | v1_13_R1 | NMS mapping for Minecraft 1.13            |
 
-Knowing the above, to support newer version, a new module has to be created. <br/>
+Knowing the above, to support newer Spigot version, a new module has to be created. <br/>
 However, in comparison to reflection, compile safety is met. No more guesses if field/method exists.
+
+----
 
 ## License
 [![GPL-3.0 License](https://img.shields.io/github/license/NewAgeCZ/CommandHook?&logo=github)](LICENSE)

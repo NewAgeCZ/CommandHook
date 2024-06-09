@@ -10,7 +10,7 @@
   <artifactId>plugin</artifactId>
   <name>CommandHook - Plugin</name>
   <packaging>jar</packaging>
-  <version>2.4.2</version>
+  <version>3.0.0</version>
 
   <properties>
     <minecraft.plugin.name>CommandHook</minecraft.plugin.name>
