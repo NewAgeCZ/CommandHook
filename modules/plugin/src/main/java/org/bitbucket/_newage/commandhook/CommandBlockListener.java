@@ -15,7 +15,7 @@ import org.bukkit.event.server.ServerCommandEvent;
 
 public class CommandBlockListener implements Listener {
 
-    private static final Pattern SELECTOR_PATTERN = Pattern.compile("@[aeprs]");
+    private static final Pattern SELECTOR_PATTERN = Pattern.compile("@[aeprs]([^a-zA-Z0-9]|$)");
     private final IMapping mapping;
 
     public CommandBlockListener(IMapping mapping) {

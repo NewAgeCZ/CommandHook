@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import static org.bitbucket._newage.commandhook.CommandBlockListener.getSelectorWithArguments;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SelectorParserTest {
+class SelectorParserTest {
 
     @Test
-    public void testSelectorNoArguments() {
+    void testSelectorNoArguments() {
         final String selector = "give @p stone 1";
         final String result = getSelectorWithArguments(selector);
 
@@ -16,7 +16,7 @@ public class SelectorParserTest {
     }
 
     @Test
-    public void testSelectorNoArgumentsAtTheEnd() {
+    void testSelectorNoArgumentsAtTheEnd() {
         final String selector = "broadcast @a";
         final String result = getSelectorWithArguments(selector);
 
@@ -24,7 +24,7 @@ public class SelectorParserTest {
     }
 
     @Test
-    public void testSelectorWithArguments() {
+    void testSelectorWithArguments() {
         final String selector = "/kick @e[type=player,distance=..2] Too close to me";
         final String result = getSelectorWithArguments(selector);
 
@@ -32,7 +32,7 @@ public class SelectorParserTest {
     }
 
     @Test
-    public void testSelectorWithArgumentsAtTheEnd() {
+    void testSelectorWithArgumentsAtTheEnd() {
         final String selector = "/kick @e[type=player,distance=..2]";
         final String result = getSelectorWithArguments(selector);
 
@@ -40,7 +40,7 @@ public class SelectorParserTest {
     }
 
     @Test
-    public void testSelectorWithArgumentsNbt() {
+    void testSelectorWithArgumentsNbt() {
 
         final String expected = "@p[nbt={SelectedItem:{id:\"minecraft:stone_sword\",tag:{display:{Name:'[{\"text\":\"Blade of the Outsider\",\"italic\":false,\"color\":\"dark_gray\",\"bold\":true}]'}}}}]";
         final String selector = "give " + expected + " stone 1";
