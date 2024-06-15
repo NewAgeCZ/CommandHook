@@ -2,7 +2,7 @@
 Minecraft plugin for Bukkit API compatible servers. Vanilla selector parsing for non-vanilla commands.
 
 **Supported versions:**
-**1.13** up to **1.20.6**
+**1.13** up to **1.21**
 
 > **Note:** Plugin is not in active development, only bugfixes and ports to newer MC runtimes are done. <br/><br/>
 > That means updates may be slow from version to version as I am no longer playing Minecraft or maintaining any server since 2019.
@@ -44,6 +44,7 @@ That means plugin _should_ be upwards compatible without any work whilst running
 
 | NMS      | Description                               |
 |----------|-------------------------------------------|
+| v1_21_R1 | NMS mapping for Minecraft 1.21            |
 | v1_20_R4 | NMS mapping for Minecraft 1.20.5 - 1.20.6 |
 | v1_20_R3 | NMS mapping for Minecraft 1.20.3 - 1.20.4 |
 | v1_20_R2 | NMS mapping for Minecraft 1.20.2          |

@@ -139,6 +139,10 @@ public class SpigotMappingSelector extends MappingSelector {
             mapping = new NmsV1_20_R4();
             break;
 
+        case "1.21":
+            mapping = new NmsV1_21_R1();
+            break;
+
         default:
             mapping = null;
         }
