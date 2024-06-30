@@ -13,7 +13,7 @@ class SelectorRegexTest {
 
     private final BlockCommandSender sender = mock();
     private final IMapping mapping = mock();
-    private final CommandBlockListener listener = new CommandBlockListener(mapping);
+    private final CommandBlockListener listener = new CommandBlockListener(mapping, "1.21");
 
     @Test
     void verifyNoInteractionsForMinecraftVanillaCommand() {

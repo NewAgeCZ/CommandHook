@@ -5,13 +5,13 @@ import java.util.regex.Pattern;
 
 import org.bitbucket._newage.commandhook.mapping.api.IMapping;
 import org.bitbucket._newage.commandhook.mapping.api.MappingSelector;
+import org.bitbucket._newage.commandhook.util.VersionUtil;
 import org.bukkit.Bukkit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SpigotMappingSelector extends MappingSelector {
     private static final Pattern NMS_PATTERN = Pattern.compile("(v\\d+_\\d+_\\w+)");
-    private static final Pattern BUKKIT_VERSION_PATTERN = Pattern.compile("(\\d+\\.\\d+(\\.\\d+)?)");
     private static final Logger log = LoggerFactory.getLogger(SpigotMappingSelector.class);
 
     @Override
@@ -30,11 +30,10 @@ public class SpigotMappingSelector extends MappingSelector {
     }
 
     private IMapping getMappingFromBukkitVersion() {
-        final Matcher bukkitVersionMatcher = BUKKIT_VERSION_PATTERN.matcher(Bukkit.getServer().getBukkitVersion());
+        String version = VersionUtil.getMinecraftVersion();
 
         IMapping mapping = null;
-        if (bukkitVersionMatcher.find()) {
-            String version = bukkitVersionMatcher.group();
+        if (version != null) {
             log.info("Minecraft version found: {}", version);
             mapping = fromMinecraftVersion(version);
         }
