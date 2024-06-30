@@ -3,6 +3,7 @@ package org.bitbucket._newage.commandhook;
 import org.bitbucket._newage.commandhook.mapping.MappingProvider;
 import org.bitbucket._newage.commandhook.mapping.ServerBrand;
 import org.bitbucket._newage.commandhook.mapping.api.IMapping;
+import org.bitbucket._newage.commandhook.util.VersionUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ public abstract class CommandHook extends JavaPlugin {
             return;
         }
 
-        CommandBlockListener listener = new CommandBlockListener(mapping);
+        CommandBlockListener listener = new CommandBlockListener(mapping, VersionUtil.getMinecraftVersion());
         getServer().getPluginManager().registerEvents(listener, this);
     }
 

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.bitbucket._newage.commandhook.mapping.api.IMapping;
+import org.bitbucket._newage.commandhook.util.VersionUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.command.BlockCommandSender;
 
@@ -16,10 +17,15 @@ import org.bukkit.event.server.ServerCommandEvent;
 public class CommandBlockListener implements Listener {
 
     private static final Pattern SELECTOR_PATTERN = Pattern.compile("@[aeprs]([^a-zA-Z0-9]|$)");
-    private final IMapping mapping;
+    private static final Pattern SELECTOR_PATTERN_WITH_AT_N = Pattern.compile("@[aenprs]([^a-zA-Z0-9]|$)");
 
-    public CommandBlockListener(IMapping mapping) {
+    private final IMapping mapping;
+    private final Pattern selectorPattern;
+
+    public CommandBlockListener(IMapping mapping, String minecraftVersion) {
         this.mapping = mapping;
+        int minorVersion = VersionUtil.getMinorVersion(minecraftVersion);
+        selectorPattern = minorVersion >= 21 ? SELECTOR_PATTERN_WITH_AT_N : SELECTOR_PATTERN;
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -34,7 +40,7 @@ public class CommandBlockListener implements Listener {
                 return;
             }
 
-            if (SELECTOR_PATTERN.matcher(cmd).find()) {
+            if (selectorPattern.matcher(cmd).find()) {
                 String selector = getSelectorWithArguments(cmd);
                 List<Entity> entities = mapping.getEntitiesFromSelector(selector, ((BlockCommandSender) e.getSender()).getBlock());
 
