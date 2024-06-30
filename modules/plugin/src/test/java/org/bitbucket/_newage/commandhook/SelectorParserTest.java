@@ -24,6 +24,14 @@ class SelectorParserTest {
     }
 
     @Test
+    void testSelectorAtN() {
+        final String selector = "tp @n[type=player] ~ ~1 ~";
+        final String result = getSelectorWithArguments(selector);
+
+        assertEquals("@n[type=player]", result);
+    }
+
+    @Test
     void testSelectorWithArguments() {
         final String selector = "/kick @e[type=player,distance=..2] Too close to me";
         final String result = getSelectorWithArguments(selector);
